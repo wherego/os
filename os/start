@@ -1,0 +1,41 @@
+#!/bin/sh
+
+gdialog --title "WZQ" --msgbox "wzq: Welcome to WZQ world!" 9 20
+
+gdialog --title "WZQ" --menu "wzq: What can I do for you?" 12 50                    \
+                             4 1 "simulate" 2 "Print directory" 3 "clean" 4 "quit"  \
+                             2>sh_tmp
+
+ANSWER=$(cat sh_tmp)
+
+while [ "$ANSWER" != "4"  ]; do
+    if   [ "$ANSWER" = "1" ]; then
+	make
+	make simulate
+    elif [ "$ANSWER" = "2" ]; then
+	#make clean
+	cd tools
+	make printdir
+	./printdir
+    elif [ "$ANSWER" = "3" ]; then
+	make clean
+    else
+	gdialog --title "WZQ" --infobox "wzq: Bye-Bye." 5 20
+	rm -f sh_tmp
+        #sleep 1
+	gdialog --clear
+	exit 0
+    fi
+
+    gdialog --title "WZQ" --menu "wzq: What can I do for you?" 12 50                    \
+                             4 1 "simulate" 2 "Print directory" 3 "clean" 4 "quit"  \
+                             2>sh_tmp
+
+    ANSWER=$(cat sh_tmp)
+done
+
+gdialog --title "WZQ" --infobox "wzq: Finished the job!" 5 20
+rm -f sh_tmp
+#sleep 1
+gdialog --clear
+exit 0

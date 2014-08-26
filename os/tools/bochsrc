@@ -1,0 +1,26 @@
+###############################################################
+# Bochs配置文件
+###############################################################
+
+# how much memory the emulated machine will have
+megs: 32
+
+# rom biso映象
+romimage: file=/usr/local/share/bochs/BIOS-bochs-latest
+# vga bios映象
+vgaromimage: file=/usr/share/vgabios/vgabios.bin
+
+# 下面两句一个意思
+floppya: 1_44=floppy.img, status=inserted
+# floppya: image="floppy.img", status=inserted
+
+boot: floppy, disk, cdrom
+
+# where do we send log messages?
+log: bochsout.txt
+
+# disable the mouse
+mouse: enabled=0
+
+# enable key mapping, using US layout as default.
+keyboard_mapping: enabled=1, map=/usr/local/share/bochs/keymaps/x11-pc-us.map

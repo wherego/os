@@ -1,0 +1,105 @@
+==========================================================================
+添加一个USER的过程:
+1：在init/main.c中添加任务执行体。
+2：在init/include/init_proto.h中添加任务执行体的函数声明。
+3：让USER_AMT加1（include/global.h）。
+4：定义任务堆栈（include/global.h）。
+5：在user_table（init/global.c）中增加一项。
+6：修改STACK_SIZE_TOTAL（include/global.h）。
+==========================================================================
+添加一个SERVER的过程:
+1：在kernel/server.c中添加任务执行体。（可以在别处）
+2：在kernel/include/kernel_proto.h中添加任务执行体的函数声明。
+3：让SERVER_AMT加1（include/global.h）。
+4：定义任务堆栈（include/global.h）。
+5：添加SERVER的ID。
+5：在server_table（init/global.c）中增加一项。
+6：修改STACK_SIZE_TOTAL（include/global.h）。
+==========================================================================
+增加一个系统调用的过程:
+（1）修改SYS_CALL_AMT（include/global.h）。
+（2）为sys_call_table[SYS_CALL_AMT]（include/global.c）增加一个成员，假设是sys_abc。
+（3）sys_abc的函数体。
+（4）sys_abc的函数声明。
+（5）NR_abc的定义（include/k_const.inc）。
+（6）_abc的函数体（kernel/syscall.asm）。
+（7）别忘了添加global _abc。
+（8）_abc的函数声明。
+（9）如果参数个数与以前的系统调用比有所增加，则需要修改_sys_call。
+==========================================================================
+
+==========================================================================
+我们用到的命令：
+(0)生成虚拟磁盘和并把boot写入到磁盘
+bximage
+dd if=boot.bin of=a.img bs=512 count=1 conv=notrunc
+
+(1)
+dd if=boot/boot.bin of=a.img bs=512 count=1 conv=notrunc
+sudo mount -o loop a.img /mnt/floppy/
+sudo cp -fv boot/loader.bin /mnt/floppy/
+sudo cp -fv kernel.bin /mnt/floppy/
+sudo umount /mnt/floppy/
+
+(2)nasm汇编
+生成的是纯二进制文件
+nasm boot.asm -o boot.bin
+
+生成的是ELF格式文件
+nasm -f elf hello.asm -o hello.o
+ld -m elf_i386(elf_x86_64 elf32_x86_64 elf_i386 
+               i386linux elf_l1om elf_k1om) -s hello.o -o hello
+
+ndisasm反汇编
+ndisasm -o 0x7c00 boot.bin >> disboot.asm
+
+(3)gcc
+gcc -E hello.c >hello.i
+cpp hello.c >hello.i
+
+gcc -o hello hello.c
+gcc -S -o hello.s hello.c
+gcc -c -o -march=i386(x86-64) hello.o helllo.c
+
+as hello.s -o hello.o
+ld hello.o hello
+
+反汇编
+objdump -d hello   >hello.s
+objdump -d hello.o >hello.s
+
+(4)二进制查看
+xxd -u -a -g 1 -c 16 -s +0x0 -l 512 a.img
+
+(5)工具
+readelf -h 读取ELF可执行文件头
+readelf -l 读取ELF文件Program Headers信息
+readelf -S 查看ELF文件Section信息
+
+objdump -d 看目标文件汇编代码
+
+objcopy的作用是拷贝一个目标文件的内容到另一个目标文件中。
+（也即是说可以将一种格式的目标文件转换成另一种格式的目标文件）
+
+linux下ELF文件分析工具:
+readelfis: 是一个unix下的二进制工具,用来显示一个或多个ELF文件的信息. 
+elfdump: 是一个Solaris命令,用来查看单个ELF文件的信息.
+objdump: 可以查看ELF文件或是其它对象格式的更多信息.
+==========================================================================
+
+==========================================================================
+缩写规则：
+ALT   alternate
+CTRL  control
+DEV   device
+DRV   drive
+INT   interrupt
+KRNL  kernel
+NB    number
+REG   register
+REQ   request
+RST   reset
+VEC   vector
+
+
+
